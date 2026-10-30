@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { SITE, REPOS } from '../config';
+import { SITE, REPOS, withBase } from '../config';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -42,7 +42,7 @@ const phrases = [
       </p>
 
       <div class="hero__actions reveal" style="transition-delay:.18s">
-        <a class="btn btn--primary" href="/blog">
+        <a class="btn btn--primary" href={withBase('/blog')}>
           阅读文章 <span aria-hidden="true">→</span>
         </a>
         <a class="btn btn--ghost" href={SITE.github} target="_blank" rel="noopener">
@@ -101,7 +101,7 @@ const phrases = [
       <div class="post-list">
         {
           posts.map((p) => (
-            <a class="post-item reveal" href={`/blog/${p.id}`}>
+            <a class="post-item reveal" href={withBase(`/posts/${p.id}`)}>
               <div class="post-item__date">
                 {p.data.pubDate.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
                 <div style="opacity:.6;font-size:.76rem">
@@ -123,7 +123,7 @@ const phrases = [
       </div>
 
       <div style="margin-top:28px" class="reveal">
-        <a class="btn btn--ghost" href="/blog">查看全部文章 →</a>
+        <a class="btn btn--ghost" href={withBase('/blog')}>查看全部文章 →</a>
       </div>
     </div>
   </section>
@@ -170,7 +170,7 @@ const phrases = [
           </div>
           <div class="grid grid--2">
             {featured.map((p) => (
-              <a class="card reveal" href={`/blog/${p.id}`}>
+              <a class="card reveal" href={withBase(`/posts/${p.id}`)}>
                 <div class="card__title">
                   <span style="color:var(--accent-2);font-family:var(--font-mono)">★</span>
                   {p.data.title}

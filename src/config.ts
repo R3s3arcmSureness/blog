@@ -1,3 +1,10 @@
+/** 部署在 https://<user>.github.io/blog/ 子路径下，所有内部链接需带此前缀 */
+export const BASE = '/blog';
+
+/** 给站内路径补上 base 前缀 */
+export const withBase = (path: string): string =>
+  path === '/' ? `${BASE}/` : `${BASE}${path}`;
+
 export const SITE = {
   title: 'R3s3arcm',
   titleLong: 'R3s3arcmSureness',

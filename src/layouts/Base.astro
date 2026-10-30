@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE, NAV } from '../config';
+import { SITE, NAV, withBase } from '../config';
 
 interface Props {
   title?: string;
@@ -22,7 +22,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     <title>{pageTitle}</title>
     <meta name="description" content={desc} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${withBase('/favicon.svg')}`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={desc} />
@@ -52,7 +52,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 
     <header class="site-header">
       <div class="container site-header__inner">
-        <a href="/" class="logo">
+        <a href={withBase('/')} class="logo">
           <span class="logo__mark">R3</span>
           <span>{SITE.title}</span>
         </a>
@@ -84,7 +84,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     <footer class="site-footer">
       <div class="container site-footer__inner">
         <div>
-          <a href="/" class="logo" style="margin-bottom:10px">
+          <a href={withBase('/')} class="logo" style="margin-bottom:10px">
             <span class="logo__mark">R3</span>
             <span>{SITE.title}</span>
           </a>
@@ -92,9 +92,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         </div>
         <div class="site-footer__links">
           <a href={SITE.github} target="_blank" rel="noopener">GitHub</a>
-          <a href="/blog">文章</a>
-          <a href="/projects">项目</a>
-          <a href="/about">关于</a>
+          <a href={withBase('/blog')}>文章</a>
+          <a href={withBase('/projects')}>项目</a>
+          <a href={withBase('/about')}>关于</a>
         </div>
       </div>
     </footer>

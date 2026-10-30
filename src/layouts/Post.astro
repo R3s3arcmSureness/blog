@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../config';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -13,7 +14,7 @@ const { title, description, pubDate, tags = [], readingTime } = post.data;
 <Base title={title} description={description}>
   <article class="container section" style="padding-top:56px">
     <header style="max-width:760px;margin-bottom:38px">
-      <a href="/blog" class="mono" style="color:var(--text-faint);font-size:.86rem">
+      <a href={withBase('/blog')} class="mono" style="color:var(--text-faint);font-size:.86rem">
         ← 返回文章列表
       </a>
       <h1 style="margin:18px 0 14px">{title}</h1>
@@ -46,7 +47,7 @@ const { title, description, pubDate, tags = [], readingTime } = post.data;
         <a class="btn btn--ghost" href="https://github.com/R3s3arcmSureness" target="_blank" rel="noopener">
           GitHub
         </a>
-        <a class="btn btn--primary" href="/blog">更多文章</a>
+        <a class="btn btn--primary" href={withBase('/blog')}>更多文章</a>
       </div>
     </div>
   </article>
