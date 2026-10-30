@@ -447,6 +447,33 @@ kbd {
   letter-spacing: 0.09em;
 }
 
+/* stat tiles that act as links (homepage hero) */
+.stat--link {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  transition: transform .28s var(--ease), border-color .28s var(--ease),
+    background .28s var(--ease);
+}
+.stat--link:hover {
+  transform: translateY(-3px);
+  border-color: #7c5cff66;
+  background: #7c5cff0d;
+}
+.stat--link:hover .stat__label {
+  color: var(--text-dim);
+}
+.stat--link .stat__label::after {
+  content: '\2197';
+  margin-left: 4px;
+  opacity: 0;
+  color: var(--accent-2);
+  transition: opacity .25s var(--ease);
+}
+.stat--link:hover .stat__label::after {
+  opacity: 1;
+}
+
 /* ---------- Section head ---------- */
 .section-head {
   margin-bottom: 40px;

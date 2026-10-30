@@ -48,18 +48,18 @@ const phrases = ['Reverse Engineering', 'Security Research', 'Automation', 'Priv
       </div>
 
       <div class="hero__stats reveal" style="transition-delay:.24s">
-        <div class="stat">
+        <a class="stat stat--link" href={withBase('/projects')}>
           <span class="stat__num">{REPOS.length}</span>
           <span class="stat__label">开源项目</span>
-        </div>
-        <div class="stat">
+        </a>
+        <a class="stat stat--link" href={withBase('/posts')}>
           <span class="stat__num">{posts.length}</span>
           <span class="stat__label">已发布文章</span>
-        </div>
-        <div class="stat">
+        </a>
+        <a class="stat stat--link" href={SITE.github} target="_blank" rel="noopener">
           <span class="stat__num">{totalStars}</span>
           <span class="stat__label">累计 Star</span>
-        </div>
+        </a>
       </div>
     </div>
   </section>
