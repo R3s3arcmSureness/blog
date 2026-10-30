@@ -1,0 +1,191 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { SITE, REPOS } from '../config';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const featured = posts.filter((p) => p.data.featured).slice(0, 2);
+const latest = posts.filter((p) => !featured.includes(p)).slice(0, 3);
+
+const phrases = [
+  'Reverse Engineering',
+  'Security Research',
+  'Agent Guardrails',
+  'Privacy Compliance',
+  'Automation',
+];
+---
+
+<Base>
+  <section class="hero">
+    <div class="container">
+      <div class="hero__badge reveal">
+        <span class="dot"></span>
+        <span>accepting new challenges · 2026</span>
+      </div>
+
+      <h1 class="reveal" style="transition-delay:.06s">
+        <span class="hero__name">{SITE.titleLong}</span>
+        <span class="hero__title">
+          <span id="typewriter" data-phrases={JSON.stringify(phrases)}></span><span
+            style="color:var(--accent-2)"
+            >▋</span
+          >
+        </span>
+      </h1>
+
+      <p class="hero__desc reveal" style="transition-delay:.12s">
+        {SITE.description}
+      </p>
+
+      <div class="hero__actions reveal" style="transition-delay:.18s">
+        <a class="btn btn--primary" href="/blog">
+          阅读文章 <span aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--ghost" href={SITE.github} target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+            ></path>
+          </svg>
+          GitHub
+        </a>
+      </div>
+
+      <div class="hero__stats reveal" style="transition-delay:.24s">
+        <div class="stat">
+          <span class="stat__num">{REPOS.length}</span>
+          <span class="stat__label">开源项目</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">{posts.length}</span>
+          <span class="stat__label">技术文章</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">4</span>
+          <span class="stat__label">研究方向</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">1K+</span>
+          <span class="stat__label">读者</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      {
+        [...Array(2)].map(() =>
+          ['DEX Parsing', 'Prompt Injection', 'Frida', 'Static Analysis', 'Agent Guardrails', 'Privacy Compliance', 'CI/CD'].map(
+            (t) => <span class="marquee__item">{t}</span>
+          )
+        )
+      }
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-head__eyebrow">// latest posts</span>
+        <h2>最近文章</h2>
+        <p class="section-head__desc">
+          实践笔记优先——每一个结论背后都有可复现的实验和量化的数据。
+        </p>
+      </div>
+
+      <div class="post-list">
+        {
+          posts.map((p) => (
+            <a class="post-item reveal" href={`/blog/${p.id}`}>
+              <div class="post-item__date">
+                {p.data.pubDate.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+                <div style="opacity:.6;font-size:.76rem">
+                  {p.data.pubDate.getFullYear()}
+                </div>
+              </div>
+              <div>
+                <h3 class="post-item__title">{p.data.title}</h3>
+                <p class="post-item__excerpt">{p.data.description}</p>
+                <div class="card__meta">
+                  {p.data.tags.map((t) => (
+                    <span class="chip">{t}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+      <div style="margin-top:28px" class="reveal">
+        <a class="btn btn--ghost" href="/blog">查看全部文章 →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:20px">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-head__eyebrow">// open source</span>
+        <h2>开源项目</h2>
+        <p class="section-head__desc">
+          工具链优先。每一条规则、每一个判定阈值都写在代码里，能读、能改、能验证。
+        </p>
+      </div>
+
+      <div class="grid grid--3">
+        {
+          REPOS.map((r) => (
+            <a class="card reveal" href={r.href} target="_blank" rel="noopener">
+              <div class="card__title">
+                <span style={`color:${r.accent};font-family:var(--font-mono)`}>◆</span>
+                {r.name}
+                <span class="card__arrow" style="color:var(--text-faint)">→</span>
+              </div>
+              <p class="card__desc">{r.desc}</p>
+              <div class="card__meta">
+                {r.tags.map((t) => (
+                  <span class="chip">{t}</span>
+                ))}
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section class="section" style="padding-top:20px">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="section-head__eyebrow">// featured</span>
+            <h2>精选</h2>
+          </div>
+          <div class="grid grid--2">
+            {featured.map((p) => (
+              <a class="card reveal" href={`/blog/${p.id}`}>
+                <div class="card__title">
+                  <span style="color:var(--accent-2);font-family:var(--font-mono)">★</span>
+                  {p.data.title}
+                </div>
+                <p class="card__desc">{p.data.description}</p>
+                <div class="card__meta">
+                  <span>{p.data.pubDate.toLocaleDateString('zh-CN')}</span>
+                  <span>·</span>
+                  <span>{p.data.readingTime}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.output/
+.vercel/
+*.log
+.DS_Store
+.env
+.env.production

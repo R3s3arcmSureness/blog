@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { REPOS, SITE } from '../config';
+---
+
+<Base title="项目" description="开源项目列表">
+  <section class="container section" style="padding-top:56px">
+    <div class="section-head reveal">
+      <span class="section-head__eyebrow">// open source</span>
+      <h1>项目</h1>
+      <p class="section-head__desc">
+        工具链优先。每一条规则、每一个判定阈值都写在代码里，能读、能改、能验证。
+      </p>
+    </div>
+
+    <div class="grid grid--2">
+      {
+        REPOS.map((r) => (
+          <a class="card reveal" href={r.href} target="_blank" rel="noopener">
+            <div class="card__title">
+              <span style={`color:${r.accent};font-family:var(--font-mono);font-size:.9rem`}>◆</span>
+              {r.name}
+              <span class="card__arrow" style="color:var(--text-faint)">↗</span>
+            </div>
+            <p class="card__desc">{r.desc}</p>
+            <div class="card__meta">
+              {r.tags.map((t) => (
+                <span class="chip">{t}</span>
+              ))}
+              <span style="margin-left:auto;color:var(--text-faint)">github.com</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <div
+      class="reveal"
+      style="margin-top:44px;padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)"
+    >
+      <h3 style="margin-bottom:10px">设计原则</h3>
+      <p class="muted" style="margin-bottom:14px">
+        所有项目遵循同一条底线：<strong style="color:var(--text)">核心能力不依赖任何外部工具</strong>，
+        外部工具只能做增强，缺一个也不能导致出不了结果。
+      </p>
+      <div class="grid grid--3" style="gap:14px">
+        <div>
+          <div class="mono" style="color:var(--accent-2);margin-bottom:5px">01 / 可复现</div>
+          <div class="muted" style="font-size:.9rem">结论能被独立验证，环境要求写清楚。</div>
+        </div>
+        <div>
+          <div class="mono" style="color:var(--accent-2);margin-bottom:5px">02 / 可量化</div>
+          <div class="muted" style="font-size:.9rem">引入新工具必须对比基线数据，不接受"更强"。</div>
+        </div>
+        <div>
+          <div class="mono" style="color:var(--accent-2);margin-bottom:5px">03 / 可降级</div>
+          <div class="muted" style="font-size:.9rem">任一环节失败都不能让整体流程崩溃。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
