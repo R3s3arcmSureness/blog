@@ -18,6 +18,12 @@ if not exist "node_modules" (
   echo.
 )
 
+echo [准备] 清理构建缓存（避免已删除的文章残留）...
+if exist "node_modules\.astro" rmdir /s /q "node_modules\.astro"
+if exist ".astro" rmdir /s /q ".astro"
+if exist "dist" rmdir /s /q "dist"
+echo.
+
 echo [1/4] 本地构建校验（检查 frontmatter 是否正确）...
 call npm run build
 if errorlevel 1 (
