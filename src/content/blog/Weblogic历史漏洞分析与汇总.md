@@ -1,10 +1,8 @@
 ---
 title: 'WebLogic 历史漏洞成因简明分析（2010–2026）'
 description: 'WebLogic 历史漏洞成因简明分析（2010–2026）'
-pubDate: 2026-11-01
+pubDate: 2026-10-30
 tags: ['Security']
----
-
 ---
 
 ## 一、先说结论
