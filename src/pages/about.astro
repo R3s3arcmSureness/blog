@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE } from '../config';
+import { SITE, REPOS, withBase } from '../config';
+
+const langs = [...new Set(REPOS.map((r) => r.lang).filter(Boolean))];
 ---
 
 <Base title="关于" description="关于我">
@@ -12,50 +14,35 @@ import { SITE } from '../config';
 
     <div class="prose reveal">
       <p>
-        我是 <strong>{SITE.author}</strong>，安全逆向与自动化方向的开发者。日常在 Android 静态/动态分析、
-        AI Agent 安全防护和隐私合规工具链之间来回切换。
+        我是 <strong>{SITE.author}</strong>。这个站点用来存放我的开源项目与技术笔记。
       </p>
       <p>
-        我喜欢做那种"看起来很简单，但真做起来全是坑"的工具——比如零依赖的 APK 扫描器，
-        或者给 Agent 装护栏的检测引擎。这类项目最有意思的部分不是功能本身，
-        而是在各种异常输入、脏环境和对抗场景下，依然能稳定跑完并给出可信结论。
+        想了解我在做什么，直接看
+        <a href={withBase('/posts')}>文章</a> 和 <a href={withBase('/projects')}>项目</a>
+        两个页面就够了——剩下的等写出来再说。
       </p>
     </div>
 
-    <div class="grid grid--3" style="margin-top:44px">
+    <div class="grid grid--2" style="margin-top:44px">
       <div class="card reveal">
-        <div class="card__title"><span class="mono" style="color:var(--accent)">01</span>研究方向</div>
-        <ul class="muted" style="padding-left:18px;font-size:.93rem;margin:0">
-          <li style="margin-bottom:8px">Android 静态分析 / DEX 字节码解析</li>
-          <li style="margin-bottom:8px">动态插桩与运行时伪装</li>
-          <li style="margin-bottom:8px">AI Agent 提示注入防御</li>
-          <li>隐私合规检测与证据链</li>
-        </ul>
+        <div class="card__title">
+          <span class="mono" style="color:var(--accent)">01</span>技术栈
+        </div>
+        <div class="card__meta" style="margin-top:12px">
+          {langs.map((l) => <span class="chip">{l}</span>)}
+        </div>
       </div>
-      <div class="card reveal">
-        <div class="card__title"><span class="mono" style="color:var(--accent-2)">02</span>技术栈</div>
-        <ul class="muted" style="padding-left:18px;font-size:.93rem;margin:0">
-          <li style="margin-bottom:8px">Python / Go / Rust</li>
-          <li style="margin-bottom:8px">Frida · 自研 DEX 解析</li>
-          <li style="margin-bottom:8px">LLM Agent 工程化</li>
-          <li>Docker · CI 流水线</li>
-        </ul>
-      </div>
-      <div class="card reveal">
-        <div class="card__title"><span class="mono" style="color:var(--accent-3)">03</span>信条</div>
-        <ul class="muted" style="padding-left:18px;font-size:.93rem;margin:0">
-          <li style="margin-bottom:8px">结论必须可复现、可验证</li>
-          <li style="margin-bottom:8px">量化收益，拒绝"感觉更强"</li>
-          <li style="margin-bottom:8px">如实说明能力边界</li>
-          <li>不夸大，不掩饰失败</li>
-        </ul>
-      </div>
-    </div>
 
-    <div class="reveal" style="margin-top:44px">
-      <a class="btn btn--primary" href={SITE.github} target="_blank" rel="noopener">
-        在 GitHub 上找到我 →
-      </a>
+      <div class="card reveal">
+        <div class="card__title">
+          <span class="mono" style="color:var(--accent-2)">02</span>联系
+        </div>
+        <div class="card__meta" style="margin-top:12px">
+          <a class="chip chip--accent" href={SITE.github} target="_blank" rel="noopener">
+            GitHub
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 </Base>

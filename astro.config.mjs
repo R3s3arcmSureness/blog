@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://r3s3arcmureness.github.io',
+  site: 'https://r3s3arcmsureness.github.io',
   base: '/blog',
   trailingSlash: 'ignore',
   build: {

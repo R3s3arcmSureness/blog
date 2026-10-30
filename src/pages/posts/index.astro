@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { withBase } from '../../config';
+
+// 还没有文章时集合为空，getCollection 会返回空数组（仅打印一条提示）
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+---
+
+<Base title="文章" description="全部技术文章">
+  <section class="container section" style="padding-top:56px">
+    <div class="section-head reveal">
+      <span class="section-head__eyebrow">// all posts</span>
+      <h1>文章</h1>
+      <p class="section-head__desc">共 {posts.length} 篇。</p>
+      {
+        allTags.length > 0 && (
+          <div class="tag-row" style="margin-top:20px">
+            <span class="chip chip--accent">全部 {posts.length}</span>
+            {allTags.map((t) => (
+              <span class="chip">{t}</span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="post-list">
+          {posts.map((p) => (
+            <a class="post-item reveal" href={withBase(`/posts/${p.id}`)}>
+              <div class="post-item__date">
+                {p.data.pubDate.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+                <div style="opacity:.6;font-size:.76rem">{p.data.pubDate.getFullYear()}</div>
+              </div>
+              <div>
+                <h3 class="post-item__title">
+                  {p.data.title}
+                  {p.data.featured && <span style="color:var(--accent-2);font-size:.8rem">★</span>}
+                </h3>
+                <p class="post-item__excerpt">{p.data.description}</p>
+                <div class="card__meta">
+                  {p.data.tags.map((t) => (
+                    <span class="chip">{t}</span>
+                  ))}
+                  {p.data.readingTime && <span style="margin-left:auto">{p.data.readingTime}</span>}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="empty reveal">
+          <div class="empty__icon" aria-hidden="true">
+            ◍
+          </div>
+          <p class="empty__title">这里还很空</p>
+          <p class="empty__desc">
+            在 <code>src/content/blog/</code> 下新建 <code>.md</code> 文件即可发布第一篇，
+            支持 frontmatter 元数据、Markdown 与代码高亮。
+          </p>
+          <a class="btn btn--ghost" href={withBase('/')}>返回首页</a>
+        </div>
+      )
+    }
+  </section>
+</Base>

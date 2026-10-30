@@ -773,6 +773,40 @@ a.card {
   gap: 8px;
 }
 
+/* ---------- Empty state ---------- */
+.empty {
+  padding: 56px 32px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface);
+  text-align: center;
+}
+
+.empty__icon {
+  font-size: 2.4rem;
+  color: var(--accent);
+  opacity: 0.55;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+
+.empty__title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.empty__desc {
+  color: var(--text-dim);
+  font-size: 0.93rem;
+  max-width: 460px;
+  margin: 0 auto 22px;
+}
+
+.empty__desc code {
+  font-size: 0.86em;
+}
+
 /* ---------- Footer ---------- */
 .site-footer {
   margin-top: 60px;

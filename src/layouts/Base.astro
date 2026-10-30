@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE, NAV, withBase } from '../config';
+import { SITE, NAV, BASE, withBase } from '../config';
 
 interface Props {
   title?: string;
@@ -11,7 +11,8 @@ const { title, description } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
 const desc = description ?? SITE.description;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+// 去掉 base 前缀，得到站点内部的路由路径，用于导航高亮判断
+const routePath = Astro.url.pathname.replace(new RegExp(`^${BASE}`), '') || '/';
 ---
 
 <!doctype html>
@@ -22,7 +23,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     <title>{pageTitle}</title>
     <meta name="description" content={desc} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href={`${withBase('/favicon.svg')}`} />
+    <link rel="icon" type="image/svg+xml" href={`${BASE}/favicon.svg`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={desc} />
@@ -60,11 +61,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
           {
             NAV.map((item) => (
               <a
-                href={item.href}
+                href={withBase(item.href)}
                 aria-current={
                   item.href === '/'
-                    ? currentPath === '/' && 'page'
-                    : currentPath.startsWith(item.href)
+                    ? routePath === '/' && 'page'
+                    : routePath === item.href || routePath.startsWith(`${item.href}/`)
                       ? 'page'
                       : undefined
                 }
@@ -92,7 +93,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         </div>
         <div class="site-footer__links">
           <a href={SITE.github} target="_blank" rel="noopener">GitHub</a>
-          <a href={withBase('/blog')}>文章</a>
+          <a href={withBase('/posts')}>文章</a>
           <a href={withBase('/projects')}>项目</a>
           <a href={withBase('/about')}>关于</a>
         </div>
@@ -100,36 +101,64 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     </footer>
 
     <script>
-      // Scroll progress bar
+      // ---------- 滚动进度条 ----------
       const bar = document.getElementById('progress');
       const onScroll = () => {
         const h = document.documentElement;
         const max = h.scrollHeight - h.clientHeight;
-        bar!.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
       };
       document.addEventListener('scroll', onScroll, { passive: true });
       onScroll();
 
-      // Reveal on scroll
-      const items = document.querySelectorAll('.reveal');
-      if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e, i) => {
-              if (e.isIntersecting) {
-                setTimeout(() => e.target.classList.add('is-visible'), i * 70);
-                io.unobserve(e.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-        );
-        items.forEach((el) => io.observe(el));
-      } else {
-        items.forEach((el) => el.classList.add('is-visible'));
-      }
+      // ---------- 滚动进场动画 ----------
+      // 设计要点：绝不因为观察器没触发而让内容永久隐形（隐形 = 点不了）。
+      // 三层保障：① 首屏元素立即可见 ② 观察器负责后续元素 ③ 定时兜底全量显示。
+      const revealAll = (el: Element) => el.classList.add('is-visible');
 
-      // Card spotlight follow cursor
+      const initReveal = () => {
+        const items = Array.from(document.querySelectorAll('.reveal'));
+        if (!items.length) return;
+
+        // ① 首屏（已在视口内）直接显示，不等观察器
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        items.forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.top < vh * 0.92 && r.bottom > 0) revealAll(el);
+        });
+
+        // ② 观察器处理滚动到才出现的元素
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  revealAll(e.target);
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0.05, rootMargin: '0px 0px -8% 0px' }
+          );
+          items.forEach((el) => {
+            if (!el.classList.contains('is-visible')) io.observe(el);
+          });
+        }
+
+        // ③ 兜底：1.2s 后仍未显示的一律显示，保证没有隐形可点区域
+        setTimeout(() => {
+          document.querySelectorAll('.reveal:not(.is-visible)').forEach(revealAll);
+        }, 1200);
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initReveal);
+      } else {
+        initReveal();
+      }
+      window.addEventListener('load', initReveal);
+
+      // ---------- 卡片光标跟随 ----------
       document.querySelectorAll('.card').forEach((card) => {
         card.addEventListener('pointermove', (e) => {
           const r = card.getBoundingClientRect();
@@ -138,29 +167,31 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
         });
       });
 
-      // Typewriter for hero role
+      // ---------- 首屏打字机 ----------
       const tw = document.getElementById('typewriter');
       if (tw) {
         const phrases = JSON.parse(tw.dataset.phrases || '[]');
-        let p = 0,
-          c = 0,
-          del = false;
-        const tick = () => {
-          const cur = phrases[p] || '';
-          c += del ? -1 : 1;
-          tw.textContent = cur.slice(0, c);
-          let delay = del ? 45 : 78;
-          if (!del && c === cur.length) {
-            delay = 1900;
-            del = true;
-          } else if (del && c === 0) {
+        if (phrases.length) {
+          let p = 0,
+            c = 0,
             del = false;
-            p = (p + 1) % phrases.length;
-            delay = 320;
-          }
-          setTimeout(tick, delay);
-        };
-        tick();
+          const tick = () => {
+            const cur = phrases[p] || '';
+            c += del ? -1 : 1;
+            tw.textContent = cur.slice(0, c);
+            let delay = del ? 45 : 78;
+            if (!del && c === cur.length) {
+              delay = 1900;
+              del = true;
+            } else if (del && c === 0) {
+              del = false;
+              p = (p + 1) % phrases.length;
+              delay = 320;
+            }
+            setTimeout(tick, delay);
+          };
+          tick();
+        }
       }
     </script>
   </body>
